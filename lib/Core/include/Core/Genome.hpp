@@ -18,7 +18,7 @@ public:
     using MutationFunction = std::function<T(T)>;
 
     //! These are the constructors for the gene
-    Genome(T value, MutationFunction mutator) : m_Value(value), m_MutationFn(mutator) {}
+    explicit Genome(T value) : m_Value(value) {}
     Genome(const Genome<T>& other) = default;
     Genome(Genome<T>&& other) noexcept = default;
     ~Genome() = default;
@@ -27,14 +27,12 @@ public:
     [[nodiscard]] virtual const T& value() const { return m_Value; }
 
     //! This function is called to perform a mutation on the gene
-    virtual void mutate() { m_Value = m_MutationFn(m_Value); }
+    virtual void mutate(const MutationFunction& fn) { m_Value = fn(m_Value); }
 
     [[nodiscard]] virtual bool operator==(const Genome<T>& other) const { return m_Value == other.value(); }
     [[nodiscard]] virtual bool operator!=(const Genome<T>& other) const { return m_Value != other.value(); }
 
 private:
-    // This is the function used to mutate the gene
-    MutationFunction m_MutationFn;
     T m_Value;
 };
 

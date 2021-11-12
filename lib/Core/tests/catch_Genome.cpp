@@ -6,38 +6,26 @@
 using namespace moxie::Core;
 
 
-TEST_CASE("Genome: mutation") {
+TEST_CASE("Genome: can apply a simple mutation") {
+    const auto value = 1;
+
+    auto identity = [](auto foo) { return foo; };
+    auto add_1    = [](auto foo) { return foo + 1; };
+
+    auto gene = Genome{value};
+
     // Test identity mutation
-    {
-        auto identity = [](auto foo) { return foo; };
-        const auto value = 1;
+    gene.mutate(identity);
+    REQUIRE(gene.value() == identity(value));
 
-        auto gene = Genome<int>{value, identity};
-
-        REQUIRE(gene.value() == value);
-        gene.mutate();
-        REQUIRE(gene.value() == value);
-    }
-
-    // Test algebraic mutation
-    {
-        auto add_1 = [](auto foo) { return foo + 1; };
-        const auto value = 1;
-
-        auto gene = Genome<int>{value, add_1};
-
-        REQUIRE(gene.value() == value);
-        gene.mutate();
-        REQUIRE(gene.value() == value + 1);
-    }
+    // Test simple arithmetic mutation
+    gene.mutate(add_1);
+    REQUIRE(gene.value() == add_1(value));
 }
 
-TEST_CASE("Genome: operators") {
-    auto identity = [](auto foo) { return foo; };
-
-    const auto foo = Genome<double>{1.0, identity};
-    const auto bar = Genome<double>{2.0, identity};
-
+TEST_CASE("Genome: verify comparison operators") {
+    const auto foo = Genome{1.0};
+    const auto bar = Genome{2.0};
     REQUIRE(foo == foo);
     REQUIRE(foo != bar);
 }
