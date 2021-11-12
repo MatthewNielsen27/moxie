@@ -54,3 +54,24 @@ TEST_CASE("binary_crossover: splicing parents in half works") {
     REQUIRE(std::all_of(child_b.begin(), child_b.begin() + splice_point, [&](auto e) { return e == *sequence_a.begin(); }));
     REQUIRE(std::all_of(child_b.begin() + splice_point, child_b.end(),   [&](auto e) { return e == *sequence_b.begin(); }));
 }
+
+TEST_CASE("uniform_crossover: sanity") {
+    const auto sequence_a = std::vector<Genome<int>>{10, Genome{0}};
+    const auto sequence_b = std::vector<Genome<int>>{10, Genome{1}};
+
+    Crossover::Splicer splicer{};
+
+    SECTION("p=0 should yield exact copies of parents") {
+        const auto& [image_of_a, image_of_b] = splicer.uniform_crossover(sequence_a, sequence_b, 0.0);
+
+        REQUIRE(std::equal(sequence_a.begin(), sequence_a.end(), image_of_a.begin()));
+        REQUIRE(std::equal(sequence_b.begin(), sequence_b.end(), image_of_b.begin()));
+    }
+
+    SECTION("p=1 should yield inverse copies of parents") {
+        const auto& [image_of_b, image_of_a] = splicer.uniform_crossover(sequence_a, sequence_b, 1.0);
+
+        REQUIRE(std::equal(sequence_a.begin(), sequence_a.end(), image_of_a.begin()));
+        REQUIRE(std::equal(sequence_b.begin(), sequence_b.end(), image_of_b.begin()));
+    }
+}
