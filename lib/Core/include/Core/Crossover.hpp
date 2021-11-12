@@ -41,7 +41,7 @@ public:
      *  @short  Generates child DNA by performing a uniform crossover with a given probability p.
      */
     template <typename T>
-    [[nodiscard]] std::pair<T,T> uniform_crossover(const T& parent_a, const T& parent_b, const double p);
+    [[nodiscard]] std::pair<T,T> uniform_crossover(const T& parent_a, const T& parent_b, double p);
 
 };
 
@@ -86,6 +86,10 @@ template <typename T>
 std::pair<T,T> Splicer::uniform_crossover(const T &parent_a, const T &parent_b, const double p) {
     if (parent_a.size() != parent_b.size()) {
         throw std::range_error("cannot crossover sequences of different sizes");
+    } else if (p < 0) {
+        throw std::invalid_argument("crossover probability cannot be less than 0");
+    } else if (p > 1) {
+        throw std::invalid_argument("crossover probability cannot be greater than 1");
     }
 
     std::bernoulli_distribution distrib{p};
