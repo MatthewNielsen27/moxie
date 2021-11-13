@@ -19,8 +19,6 @@ public:
 
     //! These are the constructors for the gene
     explicit Genome(T value) : m_Value(value) {}
-    Genome(const Genome<T>& other) = default;
-    Genome(Genome<T>&& other) noexcept = default;
     ~Genome() = default;
 
     //! This is the value accessor for the gene
