@@ -7,6 +7,7 @@ find_package(Catch2 3 REQUIRED)
 add_executable(catch_Core
         catch_Crossover.cpp
         catch_Genome.cpp
+        catch_Selection.cpp
 )
 
 target_link_libraries(catch_Core
