@@ -11,7 +11,7 @@
 #include <set>
 
 
-namespace moxie::Core {
+namespace moxie::Util {
 
 /**
  *  @short  An alias table can be used to efficiently sample vales from a cdf (cumulative distribution function)
@@ -34,4 +34,4 @@ private:
     std::vector<double>      m_weights;
 };
 
-} // namespace moxie::Core
+} // namespace moxie::Util

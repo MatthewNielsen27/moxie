@@ -10,14 +10,14 @@
 #include <algorithm>
 #include <random>
 
-#include "Core/Crossover.hpp"
-#include "Core/Selection.hpp"
+#include "Genetics/Crossover.hpp"
+#include "Genetics/Selection.hpp"
 
 // This includes specific boilerplate code
 #include "Candidate.h"
 
 
-using namespace moxie::Core;
+using namespace moxie::Genetics;
 
 
 static constexpr std::size_t dimensions = 2;

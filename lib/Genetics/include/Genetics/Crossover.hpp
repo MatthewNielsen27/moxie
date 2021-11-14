@@ -9,7 +9,7 @@
 #include <random>
 
 
-namespace moxie::Core::Crossover {
+namespace moxie::Genetics::Crossover {
 
 /**
  *  @short  This class provides an interface to splice sequences of DNA.

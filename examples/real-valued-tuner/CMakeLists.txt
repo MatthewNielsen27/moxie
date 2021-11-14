@@ -7,5 +7,5 @@ add_executable(example_real_valued_tuner
 
 target_link_libraries(example_real_valued_tuner
     PUBLIC
-        Moxie_Core
+        Moxie_Genetics
 )

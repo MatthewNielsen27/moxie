@@ -9,7 +9,7 @@
 #include <functional>
 
 
-namespace moxie::Core {
+namespace moxie::Genetics {
 
 //! This class represents a single gene
 template <typename T>
@@ -34,4 +34,4 @@ private:
     T m_Value;
 };
 
-}
+} // namespace moxie::Genetics

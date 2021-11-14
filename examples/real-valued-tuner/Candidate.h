@@ -3,9 +3,9 @@
 #include <vector>
 #include <random>
 
-#include "Core/Genome.hpp"
+#include "Genetics/Genome.hpp"
 
-using namespace moxie::Core;
+using namespace moxie::Genetics;
 
 struct Candidate {
     //! This is the underlying Genome type (more complicated implementations can have multiple different types)

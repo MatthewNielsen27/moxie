@@ -1,6 +1,6 @@
-#include "Core/Crossover.hpp"
+#include "Genetics/Crossover.hpp"
 
-namespace moxie::Core::Crossover {
+namespace moxie::Genetics::Crossover {
 
 Splicer::Splicer() {
     std::random_device rd;
@@ -8,5 +8,4 @@ Splicer::Splicer() {
     m_rng = std::mt19937{seed};
 }
 
-}
-
+} // namespace moxie::Genetics::Crossover

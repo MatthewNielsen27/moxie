@@ -1,6 +1,7 @@
-#include "Core/AliasTable.hpp"
+#include "Util/AliasTable.hpp"
 
-namespace moxie::Core {
+
+namespace moxie::Util {
 
 AliasTable::AliasTable(const std::vector<double>& probabilities)
         : m_alias(probabilities.size(), 0),
@@ -71,4 +72,4 @@ std::set<std::size_t> AliasTable::sampleDistinct(std::mt19937& rng, std::size_t 
     return taken;
 }
 
-} // namespace moxie::Core
+} // namespace moxie::Util

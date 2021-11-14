@@ -9,39 +9,23 @@
 #include <algorithm>
 #include <random>
 
-#include "Core/AliasTable.hpp"
+#include "Util/AliasTable.hpp"
+
+#include <unordered_map>
+#include <set>
 
 
-namespace moxie::Core::Selection {
+namespace moxie::Genetics::Selection {
+
+//! Perform tournament selection
+[[nodiscard]] std::vector<std::size_t>
+        tournament_selection(const std::vector<double>& fitness,
+                             const std::size_t& n,
+                             const std::size_t& k,
+                             double p,
+                             std::mt19937& rng);
 
 
-//! @short  Convert an array of objective values (lower is better) to relative fitness values (higher is better)
-[[maybe_unused]]
-[[nodiscard]] std::vector<double>
-        objective_value_fitness(const std::vector<double>& values) {
-    // Determine the maximum objective value
-    const auto max_value = std::max(values.begin(), values.end());
-
-    // Convert objective value to fitness (relative fitness is measure of distance to max objective value)
-    std::vector<double> out{}; out.reserve(values.size());
-    std::for_each(values.begin(), values.end(), [&](auto value) { out.push_back(*max_value - value); });
-
-    return out;
-}
-
-//! @short  Convert an array of objective values (lower is better) to relative fitness values (higher is better)
-[[maybe_unused]]
-[[nodiscard]] std::vector<double>
-        normalize_fitness(const std::vector<double>& fitness) {
-    // Determine the sum of population fitness
-    const auto sum = std::accumulate(fitness.begin(), fitness.end(), 0.0);
-
-    // Normalize population fitness with respect to this sum
-    std::vector<double> normalized_fitness{}; normalized_fitness.reserve(fitness.size());
-    std::for_each(fitness.begin(), fitness.end(), [&](auto item) { normalized_fitness.push_back(item / sum); });
-
-    return normalized_fitness;
-}
 
 //! @short  Sample n elements from the population uniformly at random (without replacement).
 template <typename T>
@@ -86,6 +70,36 @@ template <typename T>
         proportional_selection(const std::vector<double>& fitness,
                                const std::size_t& n,
                                std::mt19937& rng);
+
+
+//! @short  Convert an array of objective values (lower is better) to relative fitness values (higher is better)
+[[maybe_unused]]
+[[nodiscard]] std::vector<double>
+objective_value_fitness(const std::vector<double>& values) {
+    // Determine the maximum objective value
+    const auto max_value = std::max(values.begin(), values.end());
+
+    // Convert objective value to fitness (relative fitness is measure of distance to max objective value)
+    std::vector<double> out{}; out.reserve(values.size());
+    std::for_each(values.begin(), values.end(), [&](auto value) { out.push_back(*max_value - value); });
+
+    return out;
+}
+
+//! @short  Convert an array of objective values (lower is better) to relative fitness values (higher is better)
+[[maybe_unused]]
+[[nodiscard]] std::vector<double>
+normalize_fitness(const std::vector<double>& fitness) {
+    // Determine the sum of population fitness
+    const auto sum = std::accumulate(fitness.begin(), fitness.end(), 0.0);
+
+    // Normalize population fitness with respect to this sum
+    std::vector<double> normalized_fitness{}; normalized_fitness.reserve(fitness.size());
+    std::for_each(fitness.begin(), fitness.end(), [&](auto item) { normalized_fitness.push_back(item / sum); });
+
+    return normalized_fitness;
+}
+
 
 
 
@@ -144,7 +158,7 @@ std::vector<T> truncate(const std::vector<T>& population,
 std::vector<std::size_t> proportional_selection(const std::vector<double>& fitness,
                                                 const std::size_t& n, std::mt19937& rng) {
     // Use an AliasTable to perform efficient selection using the cdf.
-    const auto selection = AliasTable{normalize_fitness(fitness)}.sampleDistinct(rng, n);
+    const auto selection = Util::AliasTable{normalize_fitness(fitness)}.sampleDistinct(rng, n);
     return {selection.begin(), selection.end()};
 }
 
@@ -163,4 +177,52 @@ std::vector<T> proportional_selection(const std::vector<T>& population,
     return out;
 }
 
-} // namespace moxie::Core::Selection
+
+std::vector<std::size_t> tournament_selection(const std::vector<double>& fitness,
+                                              const std::size_t& n,
+                                              const std::size_t& k,
+                                              double p,
+                                              std::mt19937& rng) {
+
+    std::set<std::size_t> selected{};
+
+    std::uniform_int_distribution<std::size_t> indices{0, fitness.size()};
+
+    auto cmp = [&](auto i, auto j) { return fitness[i] > fitness[j]; };
+
+    // --
+    // This lambda will return a vector of 'k' unselected members sorted by fitness
+    auto create_tournament = [&]() -> std::vector<size_t> {
+        std::set<std::size_t, decltype(cmp)> tournament_members;
+
+        while (tourney.size() < k) {
+            const auto i = indices(rng);
+            if (selected.find(i) != selected.end()) { tournament_members.insert(i); }
+        }
+
+        return {tournament_members.begin(), tournament_members.end()};
+    };
+
+    // --
+    // Create an AliasTable that we can re-use across the tournaments because
+    // the cdf remains constant
+    auto cdf = std::vector<double>{p};
+    for (std::size_t i = 1; i < k; ++i) cdf.push_back(cdf.back() * p_prime);
+
+    auto aliasTable = Util::AliasTable(cdf);
+
+    // --
+    // Repeat tournaments until we have selected enough people
+    while (selected.size() < k) {
+        // Select the tournament members
+        const auto tournament_members = create_tournament();
+
+        // Select the winner of the tournament by sampling the AliasTable
+        const auto winner = tournament_members[aliasTable.sample(rng)];
+        selected.insert(winner);
+    }
+
+    return {selected.begin(), selected.end()};
+}
+
+} // namespace moxie::Genetics::Selection
