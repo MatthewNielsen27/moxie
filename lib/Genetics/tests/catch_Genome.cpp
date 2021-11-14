@@ -1,9 +1,9 @@
 #include <catch2/catch_all.hpp>
 
-#include "Core/Genome.hpp"
+#include "Genetics/Genome.hpp"
 
 
-using namespace moxie::Core;
+using namespace moxie::Genetics;
 
 
 TEST_CASE("Genome: can apply a simple mutation") {

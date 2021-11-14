@@ -2,10 +2,10 @@
 
 #include <algorithm>
 
-#include "Core/Crossover.hpp"
-#include "Core/Genome.hpp"
+#include "Genetics/Crossover.hpp"
+#include "Genetics/Genome.hpp"
 
-using namespace moxie::Core;
+using namespace moxie::Genetics;
 
 
 TEST_CASE("binary_crossover: throws exception for sequences of differing size") {

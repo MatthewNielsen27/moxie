@@ -6,6 +6,7 @@ add_library(Moxie_Genetics
         include/Genetics/Crossover.hpp
         include/Genetics/Selection.hpp
         src/Crossover.cpp
+        src/Selection.cpp
 )
 
 target_include_directories(Moxie_Genetics PUBLIC include)
